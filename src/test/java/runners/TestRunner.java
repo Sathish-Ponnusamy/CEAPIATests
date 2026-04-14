@@ -6,8 +6,8 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-//        features={"classpath:features"},
-        features={"src/test/resources/features/Applnstatus.feature"},
+        features={"classpath:features"},
+//        features={"src/test/resources/features/Applnstatus.feature"},
         glue = "stepdefinitions",
         plugin = {
                 "pretty",

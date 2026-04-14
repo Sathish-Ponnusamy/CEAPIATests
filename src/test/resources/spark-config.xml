@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <theme>standard</theme>
+    <encoding>UTF-8</encoding>
+    <protocol>https</protocol>
+    <timelineEnabled>true</timelineEnabled>
+    <offlineMode>false</offlineMode>
+    <scripts>
+        <![CDATA[
+            function performTableSplit() {
+                var sysInfoTable = document.querySelector('.sys-info');
+                if (sysInfoTable && !document.getElementById('test-coverage-card')) {
+                    var targetKeys = ['Test Pack', 'Test Suites', 'Test Modules', 'Scenarios Covered', 'Current Execution Category'];
+                    var testCoverageData = [];
+                    var rows = sysInfoTable.querySelectorAll('tr');
+
+                    rows.forEach(function(row) {
+                        var keyCell = row.cells[0];
+                        if (keyCell) {
+                            var key = keyCell.innerText.trim();
+                            if (targetKeys.includes(key)) {
+                                testCoverageData.push({
+                                    key: key,
+                                    value: row.cells[1].innerText.trim()
+                                });
+                                row.style.display = 'none'; // Hide instead of remove to avoid indices issues during loop
+                            }
+                        }
+                    });
+
+                    if (testCoverageData.length > 0) {
+                        var sysInfoCard = sysInfoTable.closest('.card');
+                        var sysInfoCol = sysInfoCard.parentElement;
+
+                        // Force layout to 50/50
+                        sysInfoCol.className = 'col-lg-6 col-md-12';
+
+                        var newTableHtml =
+                            '<div id="test-coverage-card" class="col-lg-6 col-md-12">' +
+                            '  <div class="card">' +
+                            '    <div class="card-header"><p>Test Coverage</p></div>' +
+                            '    <div class="card-body pb-0 pt-0">' +
+                            '      <table class="table table-sm table-bordered">' +
+                            '        <thead><tr class="bg-gray"><th>Name</th><th>Value</th></tr></thead>' +
+                            '        <tbody>';
+
+                        testCoverageData.forEach(function(item) {
+                            newTableHtml += '<tr><td>' + item.key + '</td><td>' + item.value + '</td></tr>';
+                        });
+
+                        newTableHtml += '</tbody></table></div></div></div>';
+
+                        sysInfoCol.insertAdjacentHTML('afterend', newTableHtml);
+
+                        // Final cleanup: remove the hidden rows
+                        rows.forEach(function(row) {
+                            if (row.style.display === 'none') row.remove();
+                        });
+                    }
+                }
+            }
+
+            // Execute frequently to catch the dynamic rendering of the dashboard
+            var splitInterval = setInterval(performTableSplit, 200);
+
+            // Stop trying after 10 seconds to save resources
+            setTimeout(function() { clearInterval(splitInterval); }, 10000);
+        ]]>
+    </scripts>
+    <styles>
+        <![CDATA[
+        ]]>
+    </styles>
+    <title>DWP - Course Enrollment API Automation Execution Report</title>
+    <reportName>DWP - Course Enrollment API Automation Execution Report</reportName>
+    <timeStampFormat>MMM dd, yyyy HH:mm:ss</timeStampFormat>
+</configuration>
